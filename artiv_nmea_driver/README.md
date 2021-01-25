@@ -26,6 +26,7 @@ It was created by modifying [nmea_navsat_driver](http://wiki.ros.org/nmea_navsat
 Default values for various parameters are specified in the ```nmea_serial_driver.launch``` file. By default your GPS is connected to ```/dev/artivGPS```(using symlink), and is communicating at 115200 baud.
   
 ## Published Topics
+
 - gps_fix ([sensor_msgs/NavSatFix](http://docs.ros.org/en/api/sensor_msgs/html/msg/NavSatFix.html))
   - GPS position fix reported by the device. This will be published with whatever positional and status data was available even if the device doesn't have a valid fix. Invalid fields may contain NaNs.
 
@@ -46,6 +47,12 @@ Default values for various parameters are specified in the ```nmea_serial_driver
     
 - time_reference ([sensor_msgs/TimeReference](http://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/TimeReference.html))
   - The timestamp from the GPS device is used as the time_ref.
+
+## Error Types
+In accordance with the operating conditions of the warning device in the ARTIV_Framework, the following type of error is output.
+
+- Type 1(Fatal) : Invaild Checksum, Device Connection Fail
+- Type 2(Error) : Value Error, HDOP exceeds 3, RTK is not Fixed
 
 ---------------------------------------------------------------------------------------------
 
