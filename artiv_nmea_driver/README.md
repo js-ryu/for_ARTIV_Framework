@@ -9,45 +9,38 @@ artiv_nmea_driver
 - License: BSD
 - Source: git https://github.com/ros-drivers/nmea_navsat_driver.git (branch: melodic-devel)
 ---------------------------------------------------------------------------------------------
-
+  
 ## Sample Usage
+
+1. 다운받은 ```artiv_nmea_driver``` 폴더를 ```~/catkin_ws(or another catkin workspace)/src```로 옮깁니다.
+2. 터미널을 여시고 ~/catkin_ws/src(or your path)/artiv_nmea_driver/scripts로 들어가셔서 chmod +x nmea_serial_driver.py로 권한을 줍니다.
+3. 우리에게 너무나도 익숙한 ros1 실행, catkin_make and source devel/setup.bash!
+4. ```$ roslaunch artiv_nmea_driver nmea_serial_driver.launch```
+
 To get up and running quickly, you can use the following command to start outputting your GPS data onto ROS topics. ```nmea_serial_driver.launch``` 파일에 각종 파라미터들에 대한 기본값이 지정되어 있다. 기본값으로 당신의 GPS가 /dev/artivGPS(using symlink)에 연결되어 있고, and is communicating at 115200 baud.
   
-```$ roslaunch artiv_nmea_driver nmea_serial_driver.launch```
 
 ## Published Topics
 - gps_fix ([sensor_msgs/NavSatFix](http://docs.ros.org/en/api/sensor_msgs/html/msg/NavSatFix.html))
-
   - GPS position fix reported by the device. This will be published with whatever positional and status data was available even if the device doesn't have a valid fix. Invalid fields may contain NaNs.
 
-- gps_vel (geometry_msgs/TwistStamped)
+- gps_vel ([geometry_msgs/TwistStamped](http://docs.ros.org/en/api/geometry_msgs/html/msg/TwistStamped.html))
+  - Velocity output from the GPS device. Only published when the device outputs valid velocity information. The driver does not calculate the velocity based on only position fixes. 단위는 m/s.
 
-  - Velocity output from the GPS device. Only published when the device outputs valid velocity information. The driver does not calculate the velocity based on only position fixes.
+- gps_spd ([std_msgs/Float64](http://docs.ros.org/en/melodic/api/std_msgs/html/msg/Float64.html))
+  - Speed output from the GPS device. Only published when the device outputs valid speed information. 단위는 km/h.
 
-- gps_spd (Float64)
-  - Speed output from the GPS device. Only published when the device outputs valid speed information.
+- gps_deg ([std_msgs/Float64](http://docs.ros.org/en/melodic/api/std_msgs/html/msg/Float64.html))
+  - 차량의 heading 각을 표현하였음. 단위는 deg이며, 범위는 0° to 360°이다. 북쪽 0°, 동쪽 90°, 남쪽 180°, 서쪽 270°
 
-- gps_deg (Float64)
-  - heading
+- gps_yaw ([std_msgs/Float64](http://docs.ros.org/en/melodic/api/std_msgs/html/msg/Float64.html))
+  - 차량의 heading 각을 deg와는 다른 형태로 표현하였음. 단위는 deg이며, 범위는 -180° to 180°이다. 동쪽 0°, 북쪽 90°, 남쪽 -90°, 서쪽 180° or -180° / +x축을 기준으로 위쪽 양수, 아래쪽 음수
 
-- gps_yaw (Float64)
-  - heading
-
-- utm_fix (PoseStamped)
-  - 현재 위치를 utm 좌표계로 publish. (존은 생략) 단순 x, y 좌표만 출력
+- utm_fix ([geometry_msgs/PoseStamped](http://docs.ros.org/en/melodic/api/geometry_msgs/html/msg/PoseStamped.html))
+  - 현재 위치를 utm 좌표계로 publish. (존은 생략) 단순 x, y 좌표만 출력.
   
-  
-
-
-
-time_reference (sensor_msgs/TimeReference)
-The timestamp from the GPS device is used as the time_ref.
-
-
-
-
-
-
+- time_reference ([sensor_msgs/TimeReference](http://docs.ros.org/en/melodic/api/sensor_msgs/html/msg/TimeReference.html))
+  - The timestamp from the GPS device is used as the time_ref.
 
 ---------------------------------------------------------------------------------------------
 
