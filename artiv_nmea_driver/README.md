@@ -2,7 +2,7 @@ artiv_nmea_driver
 ===============
 This package is the NMEA ROS driver for ARTIV_Framework.
 
-It was created by modifying [nmea_navsat_driver](http://wiki.ros.org/nmea_navsat_driver)([melodic-devel](https://github.com/ros-drivers/nmea_navsat_driver/tree/melodic-devel)), and the information of the original author is as follows.
+It was created by modifying [nmea_navsat_driver](http://wiki.ros.org/nmea_navsat_driver)([melodic-devel](https://github.com/ros-drivers/nmea_navsat_driver/tree/melodic-devel), VER 0.5.2), and the information of the original author is as follows.
 
 - Maintainer: Ed Venator <evenator AT gmail DOT com>
 - Author: Eric Perko <eric AT ericperko DOT com>, Steven Martin
