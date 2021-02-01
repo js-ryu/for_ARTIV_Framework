@@ -39,8 +39,12 @@ import rospy
 
 from libnmea_navsat_driver.driver import RosNMEADriver
 
+import time
+
+error = []
 
 def main():
+    global error
     """Create and run the nmea_serial_driver ROS node.
 
     Creates a ROS NMEA Driver and feeds it NMEA sentence strings from a serial device.
@@ -55,36 +59,55 @@ def main():
     serial_baud = rospy.get_param('~baud', 115200)
     frame_id = RosNMEADriver.get_frame_id()
 
-    try:
-        GPS = serial.Serial(port=serial_port, baudrate=serial_baud, timeout=2)
-
+    while not rospy.is_shutdown():
         try:
-            driver = RosNMEADriver()
-            while not rospy.is_shutdown():
-                data = GPS.readline().strip()
-                try:
-                    driver.add_sentence(data, frame_id)
-                except ValueError as e:
-                    rospy.logerr("type2 - Value Error!")
+            GPS = serial.Serial(port=serial_port, baudrate=serial_baud, timeout=2)
+            if 1.3 in error:
+                rospy.logfatal("type1 - RTK-GNSS is NOT connected! RECOVERED")
+                error.remove(1.3)
+            try:
+                driver = RosNMEADriver()
+                while not rospy.is_shutdown():
+                    data = GPS.readline().strip()
+                    if 1.2 in error:
+                        rospy.logfatal("type1 - RTK-GNSS connection is FAILED! RECOVERED")
+                        error.remove(1.2)
 
-                    #Original Warning
-                    """
-                    rospy.logwarn(
-                        "Value error, likely due to missing fields in the NMEA message. "
-                        "Error was: %s. Please report this issue at "
-                        "github.com/ros-drivers/nmea_navsat_driver, including a bag file with the NMEA "
-                        "sentences that caused it." %
-                        e)
-                    """
+                    try:
+                        driver.add_sentence(data, frame_id)
+                        if 2.3 in error:
+                            rospy.logerr("type2 - Value Error! RECOVERED")
+                            error.remove(2.3)
 
-        except (rospy.ROSInterruptException, serial.serialutil.SerialException):
-            GPS.close()  # Close GPS serial port
-            rospy.logfatal("type1 - RTK-GNSS connection is FAILED!")
+                    except ValueError as e:
+                        rospy.logerr("type2 - Value Error!")
+                        if not 2.3 in error:
+                            error.append(2.3)
 
-    except serial.SerialException as ex:
-        rospy.logfatal("type1 - RTK-GNSS is NOT connected!")
-        #Original Fatal
-        '''
-        rospy.logfatal(
-            "Could not open serial port: I/O error({0}): {1}".format(ex.errno, ex.strerror))
-        '''
+                        #Original Warning
+                        """
+                        rospy.logwarn(
+                            "Value error, likely due to missing fields in the NMEA message. "
+                            "Error was: %s. Please report this issue at "
+                            "github.com/ros-drivers/nmea_navsat_driver, including a bag file with the NMEA "
+                            "sentences that caused it." %
+                            e)
+                        """
+
+            except (rospy.ROSInterruptException, serial.serialutil.SerialException):
+                GPS.close()  # Close GPS serial port
+                rospy.logfatal("type1 - RTK-GNSS connection is FAILED!")
+                if not 1.2 in error:
+                    error.append(1.2)
+
+        except serial.SerialException as ex:
+            rospy.logfatal("type1 - RTK-GNSS is NOT connected!")
+            if not 1.3 in error:
+                error.append(1.3)
+            time.sleep(0.1)
+
+            #Original Fatal
+            '''
+            rospy.logfatal(
+                "Could not open serial port: I/O error({0}): {1}".format(ex.errno, ex.strerror))
+            '''
