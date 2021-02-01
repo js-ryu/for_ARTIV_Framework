@@ -46,6 +46,8 @@ from libnmea_navsat_driver.checksum_utils import check_nmea_checksum
 import libnmea_navsat_driver.parser
 
 temp = float('NaN')
+error = []
+
 class RosNMEADriver(object):
     """ROS driver for NMEA GNSS devices."""
 
@@ -109,14 +111,22 @@ class RosNMEADriver(object):
         Returns:
             bool: True if the NMEA string is successfully processed, False if there is an error.
         """
+        global error
         if not check_nmea_checksum(nmea_string):
             rospy.logfatal("type1 - RTK-GNSS may have been POWERED OFF! (invalid checksum)")
+            if not 1.1 in error :
+                error.append(1.1)
+
 	    #Original Warning
             """
             rospy.logwarn("Received a sentence with an invalid checksum. " +
                           "Sentence was: %s" % repr(nmea_string))
             """
             return False
+
+        if 1.1 in error:
+            rospy.logfatal("type1 - RTK-GNSS may have been POWERED OFF! (invalid checksum) RECOVERED")
+            error.remove(1.1)            
 
         parsed_sentence = libnmea_navsat_driver.parser.parse_nmea_sentence(
             nmea_string)
@@ -180,7 +190,13 @@ class RosNMEADriver(object):
 
             if not gps_qual in (4, 5):
                 rospy.logerr("type2 - RTK is NOT fixed!")
-		
+                if not 2.1 in error :
+                    error.append(2.1)
+
+            else:
+                if 2.1 in error:
+                    rospy.logerr("type2 - RTK is NOT fixed! RECOVERED")
+                    error.remove(2.1)            
 		
             latitude = data['latitude']
             if data['latitude_direction'] == 'S':
@@ -213,6 +229,15 @@ class RosNMEADriver(object):
 
             if hdop ** 2 > 3:
                 rospy.logerr("type2 - HDOP is TOO HIGH!")
+                if not 2.2 in error:
+                    error.append(2.2)
+
+            else:
+                if 2.2 in error:
+                    rospy.logerr("type2 - HDOP is TOO HIGH! RECOVERED")
+                    error.remove(2.2) 
+
+
             self.fix_pub.publish(current_fix)
             self.utm_pub.publish(self.utm_msg)
 
