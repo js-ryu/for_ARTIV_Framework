@@ -63,11 +63,11 @@ if len(option_input) == 0:
 
 
 elif len(option_input) == 1:
-    node_interval = int(option_input[0])
+    node_interval = float(option_input[0])
     lane_change_nodes = 20
 
 elif len(option_input) == 2:
-    node_interval = int(option_input[0])
+    node_interval = float(option_input[0])
     lane_change_nodes = int(option_input[1])
 
 else:
