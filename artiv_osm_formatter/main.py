@@ -74,7 +74,7 @@ else:
     raise Exception('Invalid Arguments')
 
 print('Node Interval :', node_interval, 'meter(s)')
-print('# of Lane Chanege Nodes :', lane_change_nodes)
+print('# of Lane Change Nodes :', lane_change_nodes)
 print("")
 
 
