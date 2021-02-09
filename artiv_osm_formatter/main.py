@@ -73,9 +73,9 @@ elif len(option_input) == 2:
 else:
     raise Exception('Invalid Arguments')
 
-    print('Node Interval :', node_interval, 'meter(s)')
-    print('# of Lane Chanege Nodes :', lane_change_nodes)
-    print("")
+print('Node Interval :', node_interval, 'meter(s)')
+print('# of Lane Chanege Nodes :', lane_change_nodes)
+print("")
 
 
 #새로 만드는 id가 기존의 id와 겹치지 않게 조정하는 함수
@@ -347,3 +347,5 @@ if __name__ == '__main__':
         output.write(line)
 
 output.close()
+
+print("All processes have ended!")
